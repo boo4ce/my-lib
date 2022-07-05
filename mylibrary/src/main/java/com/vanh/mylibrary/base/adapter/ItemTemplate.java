@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
-public interface ItemTemplate<T extends BaseAdapter.BaseViewHolder<? extends ViewBinding>, G extends ItemData> {
-    void bind(T viewHolder, G data);
+public interface ItemTemplate<T extends RecyclerView.ViewHolder> {
     T inflate(LayoutInflater layoutInflater, ViewGroup parent, boolean attachTo);
 }

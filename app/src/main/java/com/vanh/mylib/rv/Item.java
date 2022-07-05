@@ -3,7 +3,7 @@ package com.vanh.mylib.rv;
 import com.vanh.mylibrary.base.adapter.BaseItem;
 import com.vanh.mylibrary.base.adapter.ItemData;
 
-public class Item extends BaseItem<String> {
+public class Item implements ItemData<ViewHolder> {
     private String title;
 
     public Item(String title) {
@@ -19,12 +19,12 @@ public class Item extends BaseItem<String> {
     }
 
     @Override
-    protected String getMainData() {
+    public String getCompareContent() {
         return title;
     }
 
     @Override
-    public String getCompareContent() {
-        return title;
+    public void bind(ViewHolder viewHolder) {
+        viewHolder.setTitle(title);
     }
 }

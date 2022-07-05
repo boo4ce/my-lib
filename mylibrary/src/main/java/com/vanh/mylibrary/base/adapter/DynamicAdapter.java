@@ -13,17 +13,18 @@ import com.vanh.mylibrary.base.adapter.callback.OnItemClick;
 
 import java.util.List;
 
-public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseViewHolder<ViewBinding>> {
-    protected final List<ItemData> mDataList;
-    protected final ItemTemplate<BaseViewHolder<ViewBinding>, ItemData> mTemplate;
-    protected OnItemClick<? extends BaseViewHolder<ViewBinding>> mListener;
+public abstract class DynamicAdapter<T extends DynamicAdapter.BaseViewHolder<? extends ViewBinding>>
+        extends RecyclerView.Adapter<T> {
+    protected final List<ItemData<T>> mDataList;
+    protected final ItemTemplate<T> mTemplate;
+    protected OnItemClick<T> mListener;
 
-    public BaseAdapter(ItemTemplate<BaseViewHolder<ViewBinding>, ItemData> template, List<ItemData> dataList) {
+    public DynamicAdapter(ItemTemplate<T> template, List<ItemData<T>> dataList) {
         this.mDataList = dataList;
         this.mTemplate = template;
     }
 
-    public void changeData(List<ItemData> newData) {
+    public void changeData(List<ItemData<T>> newData) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TaskDiffCallback(mDataList, newData));
         this.mDataList.clear();
         this.mDataList.addAll(newData);
@@ -31,7 +32,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         diffResult.dispatchUpdatesTo(this);
     }
 
-    public void onItemClickListener(OnItemClick<? extends BaseViewHolder<ViewBinding>> listener) {
+    public void onItemClickListener(OnItemClick<T> listener) {
         this.mListener = listener;
     }
 
@@ -41,14 +42,16 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     @NonNull
     @Override
-    public BaseViewHolder<ViewBinding> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public T onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return mTemplate.inflate(LayoutInflater.from(parent.getContext()), parent, false);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseViewHolder<ViewBinding> holder, int position) {
-        mTemplate.bind(holder, mDataList.get(position));
-        holder.bindData(mDataList.get(position));
+    public void onBindViewHolder(@NonNull T holder, int position) {
+        ItemData<T> item = mDataList.get(position);
+
+        holder.bindData(item);
+        item.bind(holder);
     }
 
     @Override
@@ -58,10 +61,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     public abstract static class BaseViewHolder<T extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected final T binding;
-        private ItemData data;
-        private final OnItemClick listener;
+        private ItemData<? extends BaseViewHolder<? extends ViewBinding>> data;
+        private final OnItemClick<BaseViewHolder<T>> listener;
 
-        public BaseViewHolder(@NonNull T binding, OnItemClick listener) {
+        public BaseViewHolder(@NonNull T binding,
+                              OnItemClick<BaseViewHolder<T>> listener) {
             super(binding.getRoot());
 
             this.binding = binding;
@@ -69,11 +73,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
             itemView.setOnClickListener(this);
         }
 
-        public void bindData(ItemData data) {
+        public <H extends DynamicAdapter.BaseViewHolder<? extends ViewBinding>> void bindData(ItemData<H> data) {
             this.data = data;
         }
 
-        public ItemData getData() {
+        public ItemData<? extends BaseViewHolder<? extends ViewBinding>> getData() {
             return data;
         }
 
@@ -83,11 +87,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         }
     }
 
-    private final static class TaskDiffCallback extends DiffUtil.Callback {
-        private final List<ItemData> oldTasks;
-        private final List<ItemData> newTasks;
+    private final class TaskDiffCallback extends DiffUtil.Callback {
+        private final List<ItemData<T>> oldTasks;
+        private final List<ItemData<T>> newTasks;
 
-        public TaskDiffCallback(List<ItemData> oldTasks, List<ItemData> newTasks) {
+        public TaskDiffCallback(List<ItemData<T>> oldTasks, List<ItemData<T>> newTasks) {
             this.oldTasks = oldTasks;
             this.newTasks = newTasks;
         }

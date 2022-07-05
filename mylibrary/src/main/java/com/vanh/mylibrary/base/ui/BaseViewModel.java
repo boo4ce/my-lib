@@ -1,4 +1,4 @@
-package com.vanh.mylibrary.base;
+package com.vanh.mylibrary.base.ui;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

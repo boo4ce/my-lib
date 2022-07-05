@@ -1,4 +1,4 @@
-package com.vanh.mylibrary.base;
+package com.vanh.mylibrary.base.ui;
 
 import android.app.Activity;
 import android.content.Context;

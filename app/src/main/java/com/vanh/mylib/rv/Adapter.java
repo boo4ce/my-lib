@@ -6,8 +6,8 @@ import com.vanh.mylibrary.base.adapter.ItemTemplate;
 
 import java.util.List;
 
-public class Adapter extends DynamicAdapter<ViewHolder> {
-    public Adapter(ItemTemplate<ViewHolder> template, List<ItemData<ViewHolder>> dataList) {
+public class Adapter extends DynamicAdapter<ViewHolder2> {
+    public Adapter(ItemTemplate<ViewHolder2> template, List<ItemData<ViewHolder2>> dataList) {
         super(template, dataList);
     }
 }

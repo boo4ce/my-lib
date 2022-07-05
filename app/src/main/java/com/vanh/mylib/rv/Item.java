@@ -1,9 +1,8 @@
 package com.vanh.mylib.rv;
 
-import com.vanh.mylibrary.base.adapter.BaseItem;
 import com.vanh.mylibrary.base.adapter.ItemData;
 
-public class Item implements ItemData<ViewHolder> {
+public class Item implements ItemData<ViewHolder2> {
     private String title;
 
     public Item(String title) {
@@ -24,7 +23,7 @@ public class Item implements ItemData<ViewHolder> {
     }
 
     @Override
-    public void bind(ViewHolder viewHolder) {
+    public void bind(ViewHolder2 viewHolder) {
         viewHolder.setTitle(title);
     }
 }

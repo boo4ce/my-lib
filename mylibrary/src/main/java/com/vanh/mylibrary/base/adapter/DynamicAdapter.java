@@ -13,7 +13,7 @@ import com.vanh.mylibrary.base.adapter.callback.OnItemClick;
 
 import java.util.List;
 
-public abstract class DynamicAdapter<T extends DynamicAdapter.BaseViewHolder<? extends ViewBinding>>
+public abstract class DynamicAdapter<T extends DynamicAdapter.ViewHolder<? extends ViewBinding>>
         extends RecyclerView.Adapter<T> {
     protected final List<ItemData<T>> mDataList;
     protected final ItemTemplate<T> mTemplate;
@@ -32,7 +32,7 @@ public abstract class DynamicAdapter<T extends DynamicAdapter.BaseViewHolder<? e
         diffResult.dispatchUpdatesTo(this);
     }
 
-    public void onItemClickListener(OnItemClick<T> listener) {
+    public void setOnItemClickListener(OnItemClick<T> listener) {
         this.mListener = listener;
     }
 
@@ -59,13 +59,13 @@ public abstract class DynamicAdapter<T extends DynamicAdapter.BaseViewHolder<? e
         return mDataList.size();
     }
 
-    public abstract static class BaseViewHolder<T extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public abstract static class ViewHolder<T extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected final T binding;
-        private ItemData<? extends BaseViewHolder<? extends ViewBinding>> data;
-        private final OnItemClick<BaseViewHolder<T>> listener;
+        private ItemData<? extends ViewHolder<? extends ViewBinding>> data;
+        protected final OnItemClick<ViewHolder<T>> listener;
 
-        public BaseViewHolder(@NonNull T binding,
-                              OnItemClick<BaseViewHolder<T>> listener) {
+        public ViewHolder(@NonNull T binding,
+                          OnItemClick<ViewHolder<T>> listener) {
             super(binding.getRoot());
 
             this.binding = binding;
@@ -73,17 +73,17 @@ public abstract class DynamicAdapter<T extends DynamicAdapter.BaseViewHolder<? e
             itemView.setOnClickListener(this);
         }
 
-        public <H extends DynamicAdapter.BaseViewHolder<? extends ViewBinding>> void bindData(ItemData<H> data) {
+        public <H extends ViewHolder<? extends ViewBinding>> void bindData(ItemData<H> data) {
             this.data = data;
         }
 
-        public ItemData<? extends BaseViewHolder<? extends ViewBinding>> getData() {
+        public ItemData<? extends ViewHolder<? extends ViewBinding>> getData() {
             return data;
         }
 
         @Override
         public void onClick(View view) {
-            if(listener != null) listener.onItemClicked(this);
+            if(listener != null) listener.onItemClicked(view, this);
         }
     }
 
